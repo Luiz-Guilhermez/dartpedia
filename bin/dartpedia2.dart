@@ -4,9 +4,22 @@ import 'package:command_runner/command_runner.dart';
 
 const version = '0.0.1';
 
-void main(List<String> arguments)async{
-  var runner = CommandRunner();
-  await runner.run(arguments);
+void main(List<String> arguments) {
+  var command_runner = CommandRunner(
+    onOutput: (String output) async{
+      await write(output);
+    },
+    onError: (Object error) {
+      if (error is Error) {
+        throw error;
+      }
+      if (error is Exception) {
+        print(error);
+      }
+    },
+  ).. addCommand(HelpCommand());
+  CommandRunner.run(arguments);
+}
 //   if(arguments.isEmpty || arguments.first == 'help'){
 //     printUsage();
 //   }else if(arguments.first == 'version'){
@@ -17,7 +30,6 @@ void main(List<String> arguments)async{
 //   }else{
 //     printUsage();
 //   }
-}
 
 void printUsage(){
   print("Comandos válidos: 'help', 'version', 'search <ARTICLE-TITLE>'");
